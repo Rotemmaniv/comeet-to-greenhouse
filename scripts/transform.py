@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# version: 1
+# version: 2
 """
 Comeet → Greenhouse candidate import transformer.
 
@@ -27,16 +27,16 @@ GREENHOUSE_COLUMNS = [
     "First Name", "Last Name", "Company", "Title", "Notes",
     "Email", "Phone", "Social Media", "Website", "Address",
     "Source", "Who gets credit", "Job", "Milestone", "Education",
+    "Desired Salary",
 ]
 
 # Structured candidate fields included in Notes (in display order)
 # Education is intentionally excluded — it has its own Greenhouse column.
 NOTES_STRUCTURED = [
-    ("Skills",              "Skills"),
-    ("Languages",           "Languages"),
-    ("Availability",        "Availability"),
-    ("Salary expectations", "Salary expectations"),
-    ("Notes",               "Disposition Notes"),
+    ("Skills",        "Skills"),
+    ("Languages",     "Languages"),
+    ("Availability",  "Availability"),
+    ("Notes",         "Disposition Notes"),
 ]
 
 # ── Milestone mapping ─────────────────────────────────────────────────────────
@@ -245,8 +245,9 @@ def transform(df: pd.DataFrame) -> pd.DataFrame:
             "Source":         _val(row, "Source Name"),
             "Who gets credit": _val(row, "Recruiter(s)").split(",")[0].strip(),
             "Job":            _val(row, "Position Name"),
-            "Milestone":      normalize_milestone(_val(row, "Current stage")),
-            "Education":      build_education(row),
+            "Milestone":       normalize_milestone(_val(row, "Current stage")),
+            "Education":       build_education(row),
+            "Desired Salary":  _val(row, "Salary expectations"),
         })
 
     return pd.DataFrame(output_rows, columns=GREENHOUSE_COLUMNS)
@@ -258,7 +259,7 @@ COL_WIDTHS = {
     "First Name": 18, "Last Name": 20, "Company": 28, "Title": 30,
     "Notes": 60,      "Email": 30,     "Phone": 18,   "Social Media": 35,
     "Website": 40,    "Address": 28,   "Source": 18,  "Who gets credit": 22,
-    "Job": 30,        "Milestone": 18, "Education": 40,
+    "Job": 30,        "Milestone": 18, "Education": 40, "Desired Salary": 18,
 }
 
 HEADER_BG   = "1F4E79"   # dark blue
