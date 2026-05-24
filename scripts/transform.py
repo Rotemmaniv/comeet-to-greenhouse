@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# version: 2
+# version: 3
 """
 Comeet → Greenhouse candidate import transformer.
 
@@ -239,8 +239,8 @@ def transform(df: pd.DataFrame) -> pd.DataFrame:
                                   row.get("Phone #1") if isinstance(row, dict)
                                   else (row["Phone #1"] if "Phone #1" in row.index else None)
                               ),
-            "Social Media":   "",
-            "Website":        _val(row, "Candidate LinkedIn URL"),
+            "Social Media":   _val(row, "Candidate LinkedIn URL"),
+            "Website":        "",
             "Address":        address,
             "Source":         _val(row, "Source Name"),
             "Who gets credit": _val(row, "Recruiter(s)").split(",")[0].strip(),
