@@ -6,10 +6,40 @@ Requires transform.py in the same folder.
 """
 
 import os
+import re
 import subprocess
 import sys
 import threading
+import urllib.request
 from pathlib import Path
+
+# ── Auto-update ───────────────────────────────────────────────────────────────
+_TRANSFORM_URL = (
+    "https://raw.githubusercontent.com/Rotemmaniv/comeet-to-greenhouse"
+    "/main/scripts/transform.py"
+)
+
+def _auto_update():
+    """
+    Silently check GitHub for a newer transform.py and replace the local copy
+    if the version number has changed. Fails gracefully if offline.
+    """
+    local = Path(__file__).parent / "transform.py"
+    try:
+        with urllib.request.urlopen(_TRANSFORM_URL, timeout=5) as resp:
+            remote_src = resp.read().decode()
+    except Exception:
+        return  # offline or GitHub unreachable — just continue
+
+    def _version(src: str) -> int:
+        m = re.search(r"^# version:\s*(\d+)", src, re.MULTILINE)
+        return int(m.group(1)) if m else 0
+
+    local_src = local.read_text(encoding="utf-8") if local.exists() else ""
+    if _version(remote_src) > _version(local_src):
+        local.write_text(remote_src, encoding="utf-8")
+
+_auto_update()
 
 try:
     import tkinter as tk

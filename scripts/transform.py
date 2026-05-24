@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# version: 1
 """
 Comeet → Greenhouse candidate import transformer.
 
