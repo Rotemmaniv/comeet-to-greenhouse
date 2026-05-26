@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# version: 3
+# version: 4
 """
 Comeet → Greenhouse candidate import transformer.
 
@@ -314,7 +314,7 @@ def main():
     out_path = (
         Path(args.out).expanduser().resolve()
         if args.out
-        else input_path.parent / "greenhouse_import.xlsx"
+        else input_path.parent / f"greenhouse_{input_path.stem}.xlsx"
     )
 
     print(f"Reading:      {input_path}")

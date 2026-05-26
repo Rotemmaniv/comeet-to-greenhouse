@@ -162,7 +162,7 @@ class App(tk.Tk):
         self.btn.config(state="normal", text="Select Comeet Export File…")
 
         if result.returncode == 0:
-            out = input_path.parent / "greenhouse_import.xlsx"
+            out = input_path.parent / f"greenhouse_{input_path.stem}.xlsx"
             self._output_path = out
 
             # Parse candidate count from script output
