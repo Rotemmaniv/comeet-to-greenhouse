@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# version: 7
+# version: 8
 """
 Comeet → Greenhouse candidate import transformer.
 
@@ -96,6 +96,15 @@ def clean_phone(val) -> str:
     # Strip leading apostrophe (some Comeet exports prefix phones with ')
     s = s.lstrip("'")
     return s
+
+
+def build_location(row) -> str:
+    """Return 'State, Country' when State is present, otherwise just Country."""
+    state   = _val(row, "State")
+    country = _val(row, "Country")
+    if state and country:
+        return f"{state}, {country}"
+    return country or state
 
 
 def _val_any(row, *cols) -> str:
@@ -215,8 +224,8 @@ def transform(df: pd.DataFrame) -> pd.DataFrame:
                                                  ),
             "Social Media":                      _val(row, "Candidate LinkedIn URL"),
             "Website":                           "",
-            "Country":                           _val(row, "Country"),
-            "Source":                            _val(row, "Source Name"),
+            "Country":                           build_location(row),
+            "Source":                            _val(row, "Source Type"),
             "Who gets credit":                   _val(row, "Source Name"),
             "Job":                               _val(row, "Position Name"),
             "Milestone":                         normalize_milestone(_val(row, "Current stage")),
