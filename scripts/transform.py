@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# version: 5
+# version: 6
 """
 Comeet → Greenhouse candidate import transformer.
 
@@ -122,9 +122,9 @@ def build_notes(row, all_columns: list) -> str:
     """
     # Find the starting column dynamically; fall back to index 30 (Excel col AE)
     try:
-        ae_start = all_columns.index("Current step/s")
+        ae_start = all_columns.index("Current step participants")
     except ValueError:
-        ae_start = 30
+        ae_start = 32
 
     lines = []
     seen: set = set()
