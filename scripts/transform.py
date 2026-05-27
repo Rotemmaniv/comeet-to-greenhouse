@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# version: 8
+# version: 9
 """
 Comeet → Greenhouse candidate import transformer.
 
@@ -28,7 +28,7 @@ GREENHOUSE_COLUMNS = [
     "Email", "Phone", "Social Media", "Website", "Country",
     "Source", "Who gets credit", "Job", "Milestone",
     "Salary Expectations",
-    "Last Completed Step (Recruit)",
+    "Current Step/s (Recruit)",
     "Current Stage (Recruit)",
     "Candidate Current Status (Recruit)",
     "Disposition Date (Recruit)",
@@ -230,7 +230,7 @@ def transform(df: pd.DataFrame) -> pd.DataFrame:
             "Job":                               _val(row, "Position Name"),
             "Milestone":                         normalize_milestone(_val(row, "Current stage")),
             "Salary Expectations":               _val(row, "Salary expectations"),
-            "Last Completed Step (Recruit)":     _val(row, "Last Completed Step"),
+            "Current Step/s (Recruit)":          _val(row, "Current step/s"),
             "Current Stage (Recruit)":           _val(row, "Current stage"),
             "Candidate Current Status (Recruit)": _val(row, "Candidate Current Status"),
             "Disposition Date (Recruit)":        _val_any(row, "Last Candidate Status Change Date (yyyy-MM-dd HH:mm)", "Last Step Completed Date"),
@@ -248,7 +248,7 @@ COL_WIDTHS = {
     "Notes": 65,       "Email": 30,        "Phone": 18,   "Social Media": 35,
     "Website": 20,     "Country": 18,      "Source": 18,  "Who gets credit": 22,
     "Job": 30,         "Milestone": 18,    "Salary Expectations": 22,
-    "Last Completed Step (Recruit)": 28,
+    "Current Step/s (Recruit)": 28,
     "Current Stage (Recruit)": 24,
     "Candidate Current Status (Recruit)": 28,
     "Disposition Date (Recruit)": 24,
