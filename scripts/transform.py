@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# version: 6
+# version: 7
 """
 Comeet → Greenhouse candidate import transformer.
 
@@ -32,7 +32,6 @@ GREENHOUSE_COLUMNS = [
     "Current Stage (Recruit)",
     "Candidate Current Status (Recruit)",
     "Disposition Date (Recruit)",
-    "Disposition Reason (Recruit)",
     "Disposition Notes (Recruit)",
     "Original Application Date (Recruit)",
 ]
@@ -97,6 +96,15 @@ def clean_phone(val) -> str:
     # Strip leading apostrophe (some Comeet exports prefix phones with ')
     s = s.lstrip("'")
     return s
+
+
+def _val_any(row, *cols) -> str:
+    """Try each column name in order; return the first non-empty value."""
+    for col in cols:
+        v = _val(row, col)
+        if v:
+            return v
+    return ""
 
 
 def split_name(name: str):
@@ -209,17 +217,16 @@ def transform(df: pd.DataFrame) -> pd.DataFrame:
             "Website":                           "",
             "Country":                           _val(row, "Country"),
             "Source":                            _val(row, "Source Name"),
-            "Who gets credit":                   _val(row, "Recruiter(s)").split(",")[0].strip(),
+            "Who gets credit":                   _val(row, "Source Name"),
             "Job":                               _val(row, "Position Name"),
             "Milestone":                         normalize_milestone(_val(row, "Current stage")),
             "Salary Expectations":               _val(row, "Salary expectations"),
             "Last Completed Step (Recruit)":     _val(row, "Last Completed Step"),
             "Current Stage (Recruit)":           _val(row, "Current stage"),
             "Candidate Current Status (Recruit)": _val(row, "Candidate Current Status"),
-            "Disposition Date (Recruit)":        _val(row, "Last Candidate Status Change Date (yyyy-MM-dd HH:mm)"),
-            "Disposition Reason (Recruit)":      _val(row, "Disposition Reason"),
+            "Disposition Date (Recruit)":        _val_any(row, "Last Candidate Status Change Date (yyyy-MM-dd HH:mm)", "Last Step Completed Date"),
             "Disposition Notes (Recruit)":       _val(row, "Disposition Notes"),
-            "Original Application Date (Recruit)": _val(row, "Applied Date (yyyy-MM-dd HH:mm)"),
+            "Original Application Date (Recruit)": _val_any(row, "Applied Date (yyyy-MM-dd HH:mm)", "Applied Date"),
         })
 
     return pd.DataFrame(output_rows, columns=GREENHOUSE_COLUMNS)
@@ -236,7 +243,6 @@ COL_WIDTHS = {
     "Current Stage (Recruit)": 24,
     "Candidate Current Status (Recruit)": 28,
     "Disposition Date (Recruit)": 24,
-    "Disposition Reason (Recruit)": 28,
     "Disposition Notes (Recruit)": 40,
     "Original Application Date (Recruit)": 28,
 }
